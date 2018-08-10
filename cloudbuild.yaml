@@ -1,0 +1,13 @@
+steps:
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', '-r', 'gs://${_BUCKET}/raw/', '.']
+    dir: '/workspace/static'
+  - name: busybox
+    entrypoint: 'sh'
+    args: ['-c', 'ls static/raw > files.txt']
+  - name: gcr.io/${PROJECT_ID}/dumb-pypi:latest
+    args: ['--package-list', 'files.txt', '--output-dir', 'static', '--packages-url', 'http://${_BUCKET}/raw/']
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['-m', 'rsync', '-r', '-d', 'static', 'gs://${_BUCKET}/']
+substitutions:
+  _BUCKET: pypi.donaldrauscher.com

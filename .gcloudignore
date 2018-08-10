@@ -1,0 +1,7 @@
+.git/**
+*.pyc
+**/__pycache__/**
+.idea/**
+venv/**
+static/**
+files.txt
