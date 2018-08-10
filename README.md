@@ -6,12 +6,27 @@ To build the site:
 gcloud builds submit --config cloudbuild.yaml --no-source
 ```
 
-Running the Cloud Build job requires a `dumb-pypi` custom step:
+To install package hosted on the site:
+```
+pip install your-package==0.0.1 --extra-index-url http://${BUCKET}/simple --trusted-host ${BUCKET}
+```
+
+Or add the `--extra-index-url` option at the top of your `requirements.txt`:
+```
+--extra-index-url http://${BUCKET}/simple
+--trusted-host ${BUCKET}
+your-package==0.0.1
+...
+```
+
+NOTE: Need `--trusted-host` since not using HTTPS (and [can only use HTTP](https://cloud.google.com/storage/docs/troubleshooting#https) at the moment)
+
+Running this Cloud Build job requires a `dumb-pypi` custom step; can build by running the following:
 ```
 gcloud builds submit --config cloudbuild_step.yaml .
 ```
 
-If have another Cloud Build job that is building a package and uploading to the GCS bucket, can trigger this job by adding the following 2 steps:
+If have another Cloud Build job that is building a package and uploading to the GCS bucket, can trigger this job from that job by adding the following 2 steps:
 ```
 steps:
   ...
